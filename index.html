@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>粉体设备高级预选型 - PRO</title>
+<style>
+  :root {
+    --bg: #0f0f11;         
+    --surface: #1a1a1e;    
+    --text-main: #f2f2f5;  
+    --text-sub: #8b8b93;   
+    --line: #2a2a30;       
+    --accent: #2979ff;     
+    --accent-glow: rgba(41, 121, 255, 0.3);
+    --danger: #ff5252;
+    --shadow-out: 4px 4px 10px rgba(0,0,0,0.4), -2px -2px 6px rgba(255,255,255,0.03);
+    --shadow-in: inset 4px 4px 10px rgba(0,0,0,0.6), inset -2px -2px 6px rgba(255,255,255,0.05);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background-color: var(--bg); color: var(--text-main);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", sans-serif;
+    line-height: 1.5; -webkit-font-smoothing: antialiased; padding: 24px 16px 60px;
+  }
+
+  .wrap { max-width: 520px; margin: 0 auto; }
+
+  /* 极简标题 */
+  .header { margin-bottom: 24px; padding: 0 4px; }
+  .header h1 { 
+    font-size: 28px; font-weight: 900; letter-spacing: -0.04em; color: #fff;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .header h1::before {
+    content: ''; display: block; width: 6px; height: 22px; background: var(--accent); border-radius: 3px;
+  }
+
+  /* 卡片 */
+  .card {
+    background: var(--surface); border-radius: 20px;
+    box-shadow: var(--shadow-out); border: 1px solid rgba(255, 255, 255, 0.04);
+    margin-bottom: 20px; overflow: hidden;
+  }
+
+  .card-head { padding: 18px 20px 10px; display: flex; justify-content: space-between; align-items: center; }
+  .card-title-wrap { display: flex; align-items: center; gap: 8px; }
+  .card-num { 
+    font-size: 12px; font-weight: 800; color: var(--accent); 
+    background: rgba(41, 121, 255, 0.15); padding: 2px 8px; border-radius: 6px;
+  }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--text-main); }
+
+  .card-body { padding: 10px 20px 20px; }
+
+  /* 顶部输入 */
+  .input-group { margin-bottom: 16px; }
+  .input-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-sub); margin-bottom: 8px; }
+  .input-field {
+    width: 100%; background: var(--bg); border: none; border-radius: 12px;
+    padding: 16px; color: var(--text-main); font-family: inherit; font-size: 16px; font-weight: 500;
+    box-shadow: var(--shadow-in); outline: none; border: 1px solid transparent; transition: border 0.2s;
+  }
+  .input-field:focus { border: 1px solid var(--accent); box-shadow: var(--shadow-in), 0 0 0 3px var(--accent-glow); }
+  
+  select.input-field {
+    -webkit-appearance: none; appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%238b8b93%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat; background-position: right 16px top 50%; background-size: 12px auto;
+  }
+
+  /* =========================================
+     滑块与数字动效
+     ========================================= */
+  .slider-container { margin-bottom: 24px; }
+  .slider-container:last-child { margin-bottom: 0; }
+  
+  .slider-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
+  .slider-label { font-size: 13px; font-weight: 600; color: var(--text-sub); }
+  .slider-value-wrap { text-align: right; }
+  .slider-value { 
+    font-size: 28px; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; 
+    transition: color 0.1s; /* 颜色平滑过渡 */
+  }
+  .slider-unit { font-size: 14px; color: var(--text-sub); font-weight: 600; margin-left: 2px; }
+
+  /* 滑块轨道与滑块帽 */
+  input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin: 8px 0; }
+  input[type=range]:focus { outline: none; }
+  input[type=range]::-webkit-slider-runnable-track {
+    width: 100%; height: 12px; cursor: pointer;
+    background: var(--bg); border-radius: 6px; box-shadow: var(--shadow-in); border: 1px solid rgba(255,255,255,0.02);
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; height: 28px; width: 28px; border-radius: 50%;
+    background: var(--surface); border: 2px solid var(--accent);
+    margin-top: -9px; cursor: pointer; box-shadow: 2px 2px 6px rgba(0,0,0,0.5), -1px -1px 4px rgba(255,255,255,0.1);
+    transition: transform 0.1s, border-color 0.2s;
+  }
+  input[type=range]::-webkit-slider-thumb:active { transform: scale(1.15); background: var(--surface-hover); }
+
+  .slider-ticks { display: flex; justify-content: space-between; font-size: 11px; color: #55555c; font-weight: 600; margin-top: 4px; padding: 0 4px; }
+
+  /* =========================================
+     胶囊标签排布 (替代九宫格)
+     ========================================= */
+  .chips-cloud { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip {
+    padding: 10px 16px; border-radius: 99px; border: 1px solid var(--line);
+    background: transparent; color: var(--text-sub);
+    font-family: inherit; font-size: 14px; font-weight: 600; 
+    transition: all 0.2s ease; cursor: pointer;
+  }
+  .chip.on {
+    background: rgba(41, 121, 255, 0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .chip[data-k="ex"].on {
+    background: rgba(255, 82, 82, 0.15);
+    border-color: var(--danger);
+    color: var(--danger);
+  }
+
+  /* 单位切换开关 (极简版本) */
+  .unit-switch {
+    display: flex; background: var(--bg); border-radius: 8px; padding: 2px;
+    box-shadow: var(--shadow-in); border: 1px solid rgba(255,255,255,0.02);
+  }
+  .unit-switch button {
+    padding: 4px 12px; border: none; background: transparent;
+    font-size: 12px; font-weight: 700; color: var(--text-sub);
+    border-radius: 6px; cursor: pointer; transition: all 0.2s;
+  }
+  .unit-switch button.on { background: var(--surface-hover); color: #fff; box-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
+
+  /* 底部按钮 */
+  .btn-primary {
+    display: block; width: 100%; padding: 18px; border-radius: 16px;
+    background: var(--accent); color: #fff; border: none;
+    font-family: inherit; font-size: 18px; font-weight: 800;
+    cursor: pointer; box-shadow: 0 6px 20px var(--accent-glow), inset 0 2px 0 rgba(255,255,255,0.2);
+    transition: all 0.1s; margin-bottom: 32px;
+  }
+  .btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 10px var(--accent-glow); }
+
+  /* 结果区 */
+  .res-header { font-size: 18px; font-weight: 800; color: #fff; margin: 24px 4px 12px; }
+  .res-main-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  .res-sub-title { font-size: 14px; color: var(--text-sub); margin-bottom: 20px; }
+  .res-badge { display: inline-block; font-size: 12px; font-weight: 800; color: var(--accent); background: rgba(41, 121, 255, 0.15); padding: 4px 10px; border-radius: 8px; margin-bottom: 12px; }
+  .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .res-item span { display: block; font-size: 12px; font-weight: 600; color: var(--text-sub); margin-bottom: 4px; }
+  .res-item b { display: block; font-size: 15px; font-weight: 700; color: var(--text-main); }
+  .res-warn { margin-top: 20px; padding: 16px; border-radius: 12px; background: rgba(255, 82, 82, 0.08); border: 1px solid rgba(255, 82, 82, 0.2); color: #ff8a80; font-size: 13px; line-height: 1.6; }
+  .res-warn b { color: var(--danger); font-weight: 800; }
+  .res-opt { margin-top: 20px; padding-top: 16px; border-top: 1px dashed var(--line); font-size: 13px; color: var(--text-sub); }
+  .res-opt b { color: var(--text-main); font-weight: 700; }
+  .res-alt-item { padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .res-alt-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .res-alt-item h3 { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
+  .res-alt-item p { font-size: 13px; color: var(--text-sub); margin-bottom: 12px; }
+  .res-alt-kv { display: flex; gap: 20px; font-size: 13px; font-weight: 600; }
+  .res-alt-kv span { color: var(--text-sub); }
+  .res-alt-kv b { color: var(--text-main); }
+  .empty-state { text-align: center; padding: 32px 0; }
+  .empty-state h3 { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+  .empty-state p { font-size: 14px; color: var(--text-sub); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <h1>粉体预选型</h1>
+  </div>
+
+  <!-- 01 基础信息 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title-wrap">
+        <span class="card-num">01</span><span class="card-title">物料与产能</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="input-group">
+        <label class="input-label">物料名称（自动匹配）</label>
+        <input id="mat" class="input-field" type="text" list="matList" placeholder="输入物料名称，如 石英..." autocomplete="off">
+        <datalist id="matList"></datalist>
+      </div>
+      <div class="input-group">
+        <label class="input-label">物料类别</label>
+        <select id="cat" class="input-field">
+          <option value="">请选择类别</option>
+          <option value="mineral">非金属矿</option>
+          <option value="hard">硬质矿物 / 高硅</option>
+          <option value="battery">电池材料</option>
+          <option value="pharma">医药 / 原料药</option>
+          <option value="food">食品 / 保健品</option>
+          <option value="chem">化工 / 颜料</option>
+          <option value="herb">中药 / 植物纤维</option>
+          <option value="metal">金属粉末</option>
+          <option value="waste">固废 / 粉煤灰</option>
+          <option value="other">其他</option>
+        </select>
+      </div>
+      
+      <!-- 产能滑块 -->
+      <div class="slider-container">
+        <div class="slider-header">
+          <span class="slider-label">目标产能</span>
+          <div class="slider-value-wrap">
+            <span class="slider-value" id="capDisplay" style="color: var(--accent);">500</span>
+            <span class="slider-unit">kg/h</span>
+          </div>
+        </div>
+        <input type="range" id="capSlider" min="10" max="10000" step="10" value="500">
+        <div class="slider-ticks"><span>10</span><span>2,500</span><span>5,000</span><span>10,000</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 粒度标准 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title-wrap">
+        <span class="card-num">02</span><span class="card-title">粒度标准</span>
+      </div>
+      <!-- 内置转换器开关 -->
+      <div class="unit-switch" id="unitSwitch">
+        <button class="on" data-u="um">µm</button>
+        <button data-u="mesh">目</button>
+      </div>
+    </div>
+    <div class="card-body">
+      
+      <!-- 粒度滑块 -->
+      <div class="slider-container">
+        <div class="slider-header">
+          <span class="slider-label">目标粒度</span>
+          <div class="slider-value-wrap">
+            <span class="slider-value" id="sizeDisplay" style="color: var(--accent);">45</span>
+            <span class="slider-unit" id="sizeUnitLabel">µm</span>
+          </div>
+        </div>
+        <!-- 滑块属性会随着单位切换用JS动态改变 -->
+        <input type="range" id="sizeSlider" min="1" max="500" step="1" value="45">
+        <div class="slider-ticks" id="sizeTicks"><span>1</span><span>100</span><span>300</span><span>500</span></div>
+      </div>
+
+      <div class="unit-switch" style="width: 100%; margin-top: 16px; padding: 4px;">
+        <button style="flex:1" data-v="D50" class="on">D50</button>
+        <button style="flex:1" data-v="D90">D90</button>
+        <button style="flex:1" data-v="D97">D97</button>
+        <button style="flex:1" data-v="D99">D99</button>
+        <button style="flex:1" data-v="D100">D100</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 工艺属性 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title-wrap">
+        <span class="card-num">03</span><span class="card-title">物理与工艺属性</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <!-- 使用流式标签云 -->
+      <div class="chips-cloud" id="chips">
+        <button class="chip" data-k="hard">莫氏硬度高</button>
+        <button class="chip" data-k="quartz">磨蚀性极强</button>
+        <button class="chip" data-k="wet">含水率高</button>
+        <button class="chip" data-k="fib">纤维/高韧性</button>
+        <button class="chip" data-k="sticky">粘性易糊壁</button>
+        <button class="chip" data-k="static">易起静电</button>
+        <button class="chip" data-k="flow">流动性差</button>
+        <button class="chip" data-k="heat">热敏/低熔点</button>
+        <button class="chip" data-k="oxidation">易氧化</button>
+        <button class="chip" data-k="volatile">易挥发</button>
+        <button class="chip" data-k="ex">易燃易爆</button>
+        <button class="chip" data-k="pure">无金属污染</button>
+        <button class="chip" data-k="gmp">医药食品级</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-primary" id="go">执行智能评估</button>
+  <div id="out"></div>
+
+</div>
+
+<script>
+/* ============ 内置物料知识库 ============ */
+const MATERIAL_DB = {
+  "石英": { cat: "hard", attrs: ["hard", "quartz"] },
+  "混凝土": { cat: "waste", attrs: ["hard", "quartz", "wet"] },
+  "钢渣": { cat: "waste", attrs: ["hard", "wet"] },
+  "粉煤灰": { cat: "waste", attrs: ["wet"] },
+  "碳酸钙": { cat: "mineral", attrs: [] },
+  "高岭土": { cat: "mineral", attrs: ["sticky"] },
+  "云母": { cat: "mineral", attrs: ["fib"] },
+  "石墨": { cat: "mineral", attrs: ["flow", "pure"] },
+  "甘草": { cat: "herb", attrs: ["fib", "heat"] },
+  "三七": { cat: "herb", attrs: ["fib"] },
+  "黄芪": { cat: "herb", attrs: ["fib", "sticky"] },
+  "阿莫西林": { cat: "pharma", attrs: ["gmp", "pure", "heat", "static"] },
+  "三元材料": { cat: "battery", attrs: ["pure", "oxidation", "static"] },
+  "磷酸铁锂": { cat: "battery", attrs: ["pure", "oxidation"] },
+  "糖": { cat: "food", attrs: ["gmp", "sticky", "heat"] },
+  "氧化铝": { cat: "hard", attrs: ["hard", "pure"] },
+  "碳化硅": { cat: "hard", attrs: ["hard", "pure", "quartz"] },
+  "颜料": { cat: "chem", attrs: ["pure"] },
+  "炭黑": { cat: "chem", attrs: ["flow", "pure", "static", "ex"] },
+  "铝粉": { cat: "metal", attrs: ["oxidation", "ex", "pure"] },
+};
+
+/* ============ 设备库 ============ */
+const DB = [
+  {
+    id:'MQW', name:'MQW 流化床式气流磨', sub:'卧式分级轮 · 干法超细',
+    cat:'气流磨', d97:[3,45], 
+    good:['heat','pure','ex','gmp','oxidation','volatile'], 
+    bad:['fib','sticky','quartz','hard','wet','flow'],
+    models:[['MQW03',0.3,1],['MQW06',10,30],['MQW10',20,300],['MQW20',40,600],['MQW30',100,900],['MQW40',200,1200],['MQW60',500,2000],['MQW80',800,3000],['MQW100',1000,4000],['MQW120',1500,6000],['MQW160',2000,8000],['MQW240',4000,12000]],
+    opt:['氮气循环保护','陶瓷内衬','CIP / SIP','防静电设计']
+  },
+  {
+    id:'MQL', name:'MQL 流化床式气流磨', sub:'立式单转子 · 大产能',
+    cat:'气流磨', d97:[6,150], 
+    good:['heat','pure','ex','gmp','oxidation','volatile'], 
+    bad:['fib','sticky','quartz','hard','wet','flow'],
+    models:[['MQL03',10,40],['MQL06',10,60],['MQL10',20,300],['MQL20',40,600],['MQL30',100,900],['MQL40',200,1200],['MQL50',500,2000],['MQL80',800,3000],['MQL100',1000,4000],['MQL120',1500,6000],['MQL160',2000,8000],['MQL240',4000,12000]],
+    opt:['氮气循环保护','陶瓷内衬','称重喂料','防静电设计']
+  },
+  {
+    id:'CSMV', name:'CSM-V 空气分级磨', sub:'立式分级轮 · 通用型机械磨',
+    cat:'机械磨', d97:[5,115], 
+    good:['soft','flow'], 
+    bad:['pure','fib','hard','quartz','sticky','oxidation','ex'],
+    models:[['CSM280-V',60,150],['CSM350-V',120,280],['CSM410-V',180,380],['CSM510-V',260,520],['CSM710-V',400,760],['CSM760-V',450,850],['CSM900-V',700,1300],['CSM1000-V',850,1500],['CSM1100-V',1100,2000],['CSM1250-V',1500,2600],['CSM1500-V',2000,3400],['CSM2000-V',3000,5200]],
+    opt:['陶瓷内衬','低温 / 惰性气体循环','防爆设计']
+  },
+  {
+    id:'CSMVD', name:'CSM-VD 空气分级磨', sub:'双轴合一 · 医药食品级',
+    cat:'机械磨', d97:[5,115], 
+    good:['gmp','pure','soft'], 
+    bad:['fib','hard','quartz','sticky','ex'],
+    models:[['CSM280-VD',30,80],['CSM350-VD',55,140],['CSM450-VD',90,220],['CSM510-VD',130,320],['CSM710-VD',220,560],['CSM900-VD',400,1000],['CSM1100-VD',650,1600]],
+    opt:['CIP / SIP','陶瓷内衬','GMP 验证文件']
+  },
+  {
+    id:'CUM', name:'CUM 系列机械粉碎机', sub:'锤式/针盘 · 韧性物料优选',
+    cat:'机械磨', d97:[25,600], 
+    good:['fib','sticky','soft'], 
+    bad:['hard','pure','quartz','static','ex'],
+    models:[['CUM160',30,80],['CUM260',90,240],['CUM360',180,480],['CUM500',350,950],['CUM630',600,1600],['CUM800',950,2600],['CUM1000',1500,4000]],
+    opt:['陶瓷内衬','防爆设计','加热/冷却风']
+  },
+  {
+    id:'MZ', name:'MZ 振动磨', sub:'研磨介质 · 强韧性/中药',
+    cat:'机械磨', d97:[6,380], 
+    good:['fib','hard','soft','sticky'], 
+    bad:['pure','static','ex'],
+    models:[['MZ100',100,200],['MZ300',200,300],['MZ500',300,600],['MZ600',400,800],['MZ800',500,1000],['MZ1000',800,1500],['MZ1200',1000,1800],['MZ2000',2000,3000]],
+    opt:['陶瓷磨介','低温 / 水冷夹套','GMP 结构']
+  },
+  {
+    id:'BALL', name:'球磨分级生产线', sub:'大规模 · 低能耗 · 兜底方案',
+    cat:'球磨', d97:[3,45], 
+    good:['hard','wet','quartz','waste','ex'], 
+    bad:['heat','gmp','fib','sticky','oxidation','volatile'],
+    models:[
+      { name:'IBM1570 + FL360', cap:[500, 2000], desc:'小产能标准线' },
+      { name:'IBM1830 + FL360', cap:[1000, 3000], desc:'1吨级主力线' },
+      { name:'IBM2200 + FL450', cap:[2500, 5000], desc:'3吨级标准线' },
+      { name:'IBM2400 + FL600', cap:[4000, 8000], desc:'5吨级主力线' },
+      { name:'IBM2600 + FL630', cap:[6000, 12000], desc:'8吨级标准线' },
+      { name:'IBM2800 + FL800', cap:[8000, 16000], desc:'10吨级大线' },
+      { name:'IBM3000 + FL1000', cap:[12000, 25000], desc:'20吨级大线' }
+    ],
+    opt:['高铬耐磨衬板/钢球','陶瓷衬板','除铁器','自动包装']
+  }
+];
+
+/* ============ 初始化数据 ============ */
+const matListEl = document.getElementById('matList');
+Object.keys(MATERIAL_DB).forEach(k => {
+  const opt = document.createElement('option');
+  opt.value = k;
+  matListEl.appendChild(opt);
+});
+
+const $ = id => document.getElementById(id);
+const matEl = $('mat'), catEl = $('cat');
+const capSlider = $('capSlider'), capDisplay = $('capDisplay');
+const sizeSlider = $('sizeSlider'), sizeDisplay = $('sizeDisplay');
+const unitSwitch = $('unitSwitch'), sizeUnitLabel = $('sizeUnitLabel'), sizeTicks = $('sizeTicks');
+const chipsEl = $('chips'), outEl = $('out');
+
+let currentUnit = 'um'; // 'um' 或 'mesh'
+let targetCap = 500;
+let targetSizeUI = 45; // UI上显示的值 (微米或目数)
+let actualSizeUm = 45; // 实际传给算法的微米值
+let basis = 'D50'; 
+
+/* ============ 动画与颜色映射 ============ */
+// 颜色映射：低速 蓝(210) -> 中速 青(180) -> 高速 紫红(320)
+function getDynamicColor(val, min, max) {
+  let p = (val - min) / (max - min); // 0 到 1
+  let hue = 210 + p * 110; // 210 (蓝) 到 320 (紫)
+  return `hsl(${hue}, 100%, 65%)`;
+}
+
+// 数字滚动动画
+function animateNumber(el, targetVal, min, max, unitText) {
+  const currentVal = parseFloat(el.innerText.replace(/,/g, '')) || 0;
+  if (currentVal === targetVal) return;
+  
+  const duration = 200; // 动画时长(ms)
+  const startTime = performance.now();
+  
+  function update(currentTime) {
+    const elapsed = currentTime - startTime;
+    let progress = Math.min(elapsed / duration, 1);
+    // easeOutQuad 缓动函数
+    progress = progress * (2 - progress); 
+    
+    const current = currentVal + (targetVal - currentVal) * progress;
+    
+    // 格式化，产能带千分位，粒度不需要
+    let displayStr = targetVal > 1000 ? Math.round(current).toLocaleString() : Math.round(current);
+    if (targetVal > 1000 && current < 1000) displayStr = Math.round(current); 
+    
+    el.innerText = displayStr;
+    el.style.color = getDynamicColor(current, min, max);
+
+    if (progress < 1) {
+      requestAnimationFrame(update);
+    } else {
+      el.innerText = targetVal > 1000 ? targetVal.toLocaleString() : targetVal;
+      el.style.color = getDynamicColor(targetVal, min, max);
+    }
+  }
+  requestAnimationFrame(update);
+}
+
+/* ============ 交互控制 ============ */
+// 产能滑块
+capSlider.addEventListener('input', (e) => {
+  targetCap = parseFloat(e.target.value);
+  animateNumber(capDisplay, targetCap, 10, 10000);
+});
+
+// 粒度滑块
+sizeSlider.addEventListener('input', (e) => {
+  targetSizeUI = parseFloat(e.target.value);
+  if (currentUnit === 'um') {
+    actualSizeUm = targetSizeUI;
+  } else {
+    // 目数转微米: 15400 / 目数
+    actualSizeUm = 15400 / targetSizeUI;
+  }
+  animateNumber(sizeDisplay, targetSizeUI, parseInt(sizeSlider.min), parseInt(sizeSlider.max));
+});
+
+// 单位切换器 (µm <-> 目)
+unitSwitch.addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if(!btn || btn.classList.contains('on')) return;
+  
+  [...unitSwitch.children].forEach(x => x.classList.remove('on'));
+  btn.classList.add('on');
+  currentUnit = btn.dataset.u;
+
+  if (currentUnit === 'um') {
+    sizeUnitLabel.innerText = 'µm';
+    sizeSlider.min = 1; sizeSlider.max = 500; sizeSlider.step = 1;
+    // 从目转回微米
+    targetSizeUI = Math.round(15400 / targetSizeUI) || 45;
+    if(targetSizeUI > 500) targetSizeUI = 500;
+    if(targetSizeUI < 1) targetSizeUI = 1;
+    actualSizeUm = targetSizeUI;
+    sizeTicks.innerHTML = `<span>1</span><span>100</span><span>300</span><span>500</span>`;
+  } else {
+    sizeUnitLabel.innerText = '目';
+    // 目数范围，大概 30目(粗) -> 12500目(极细)。反转滑块：左边是大数字(粗)，右边是小数字(细)
+    // 为直观，我们用 1-500 映射。1目=15400um，500目=30.8um
+    sizeSlider.min = 30; sizeSlider.max = 1250; sizeSlider.step = 10;
+    targetSizeUI = Math.round(15400 / targetSizeUI) || 325; // 默认换算
+    if(targetSizeUI > 1250) targetSizeUI = 1250;
+    if(targetSizeUI < 30) targetSizeUI = 30;
+    actualSizeUm = 15400 / targetSizeUI;
+    sizeTicks.innerHTML = `<span>30</span><span>400</span><span>800</span><span>1250</span>`;
+  }
+  
+  sizeSlider.value = targetSizeUI;
+  sizeDisplay.innerText = targetSizeUI;
+  sizeDisplay.style.color = getDynamicColor(targetSizeUI, parseInt(sizeSlider.min), parseInt(sizeSlider.max));
+});
+
+// D50 选择器
+document.querySelectorAll('.unit-switch[data-v]').forEach(el => {
+  // 这里其实复用了 unit-switch 的样式，但没有 id，需要找父级特定的那个
+});
+const segButtons = document.querySelectorAll('.unit-switch:not(#unitSwitch) button');
+segButtons.forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    segButtons.forEach(b => b.classList.remove('on'));
+    e.target.classList.add('on');
+    basis = e.target.dataset.v;
+  });
+});
+
+// 特性标签云
+chipsEl.addEventListener('click', e => {
+  const b = e.target.closest('.chip');
+  if(!b) return;
+  b.classList.toggle('on');
+});
+
+// 物料联动
+matEl.addEventListener('input', () => {
+  const val = matEl.value.trim();
+  const info = MATERIAL_DB[val];
+  if (info) {
+    catEl.value = info.cat;
+    [...chipsEl.children].forEach(b => {
+      b.classList.toggle('on', info.attrs.includes(b.dataset.k));
+    });
+  }
+});
+
+/* ============ 核心算法 ============ */
+function normD97(sizeUm, basis){
+  if (basis === 'D50') return sizeUm * 2.5;
+  if (basis === 'D90') return sizeUm * 1.4;
+  if (basis === 'D99') return sizeUm * 1.1;
+  if (basis === 'D100') return sizeUm * 0.6;
+  return sizeUm;
+}
+
+function scoreSeries(s, d97, cap, attrs){
+  const isHighHard = attrs.includes('hard') || attrs.includes('quartz');
+  const isEx = attrs.includes('ex');
+
+  if (s.cat === '机械磨' && isHighHard) return -1; 
+  if (s.cat === '机械磨' && isEx) return -1;
+  if (s.cat === '气流磨' && (attrs.includes('sticky') || attrs.includes('fib') || attrs.includes('wet'))) return -1;
+  if (s.id === 'BALL' && cap < 200) return -1;
+  if (d97 < s.d97[0] * 0.65) return -1;
+  if (d97 > s.d97[1] * 2.2) return -1;
+
+  let sc = 0; let minDiff = Infinity; let maxCap = 0;
+  
+  if (s.id === 'BALL') {
+    maxCap = s.models[s.models.length - 1].cap[1];
+    for (let i = 0; i < s.models.length; i++) {
+      const m = s.models[i];
+      if (cap >= m.cap[0] * 0.8 && cap <= m.cap[1]) { sc += 80; minDiff = 0; break; }
+      const diff = cap < m.cap[0] ? (m.cap[0] - cap) / cap : (cap - m.cap[1]) / cap;
+      if (diff < minDiff) { minDiff = diff; }
+    }
+  } else {
+    maxCap = s.models[s.models.length - 1][2];
+    for (let i = 0; i < s.models.length; i++) {
+      const m = s.models[i];
+      if (cap >= m[1] * 0.8 && cap <= m[2]) { sc += 80; minDiff = 0; break; }
+      const diff = cap < m[1] ? (m[1] - cap) / cap : (cap - m[2]) / cap;
+      if (diff < minDiff) { minDiff = diff; }
+    }
+  }
+
+  if (minDiff > 2.0) sc -= 150; else if (minDiff > 0.5) sc -= 40;
+  if (d97 >= s.d97[0] && d97 <= s.d97[1]) sc += 60; else if (d97 < s.d97[0]) sc += 15;
+
+  for (const a of attrs){
+    if (s.good.includes(a)) sc += 25; 
+    if (s.bad.includes(a))  sc -= 50; 
+  }
+
+  if (isHighHard && s.id === 'BALL') sc += 40;
+  if (!isHighHard && !attrs.includes('wet') && s.id === 'BALL') sc -= 30;
+  if (isEx && s.id === 'BALL') sc += 10;
+
+  return sc;
+}
+
+function pickModel(s, cap){
+  if (s.id === 'BALL') {
+    for (const m of s.models){
+      if (cap >= m.cap[0] * 0.8 && cap <= m.cap[1]) return { name: m.name, range: `${m.cap[0]}–${m.cap[1]}`, desc: m.desc };
+    }
+    let best = s.models[0], minD = Infinity;
+    for (const m of s.models) {
+       let d = cap < m.cap[0] ? m.cap[0] - cap : cap - m.cap[1];
+       if (d < minD) { minD = d; best = m; }
+    }
+    return { name: best.name + (cap > best.cap[1] ? ' (需升级)' : ' (偏小)'), range: `${best.cap[0]}–${best.cap[1]}`, desc: best.desc };
+  } else {
+    for (const m of s.models){
+      if (cap >= m[1] * 0.8 && cap <= m[2]) return { name: m[0], range: `${m[1]}–${m[2]}`, desc:'' };
+    }
+    let best = s.models[0], minD = Infinity;
+    for (const m of s.models) {
+       let d = cap < m[1] ? m[1] - cap : cap - m[2];
+       if (d < minD) { minD = d; best = m; }
+    }
+    return { name: best[0] + (cap > best[2] ? ' (需升级)' : ' (偏小)'), range: `${best[1]}–${best[2]}`, desc:'' };
+  }
+}
+
+function render(list, ctx){
+  if (!list.length){
+    outEl.innerHTML = `
+      <div class="card" style="padding: 0;">
+        <div class="empty-state">
+          <h3>未找到匹配机型</h3>
+          <p>当前工艺组合超出常规物理界限。<br>建议联系工程师安排物料小试后定制专机。</p>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const main = list[0];
+  const mm = pickModel(main.s, ctx.cap);
+  const matName = matEl.value.trim();
+  
+  let warningHtml = '';
+  if (ctx.attrs.includes('quartz') || ctx.attrs.includes('hard')) {
+    warningHtml += `<div class="res-warn"><b>工程师警告：</b><br>物料磨蚀性极强，严禁使用普通钢衬板。<br>推荐配置：<b>高铬合金耐磨衬板 + 高铬钢球 + 管道除铁器</b>。</div>`;
+  }
+  if (ctx.attrs.includes('ex')) {
+    warningHtml += `<div class="res-warn"><b>防爆强制要求：</b><br>物料具有易燃易爆属性，系统必须配备<b>防爆电机、全密闭惰性气体（氮气）循环、静电接地及在线氧含量监测</b>。</div>`;
+  }
+
+  let html = `
+    <div class="res-header">系统评估结果</div>
+    <div class="card">
+      <div class="card-body" style="padding-top: 24px;">
+        <div class="res-badge">BEST MATCH</div>
+        <div class="res-main-title">${main.s.name}</div>
+        <div class="res-sub-title">${main.s.sub}${matName ? ' · ' + matName : ''}</div>
+        
+        <div class="res-grid">
+          <div class="res-item"><span>推荐配置</span><b>${mm.name}</b></div>
+          <div class="res-item"><span>产能范围</span><b>${mm.range} kg/h</b></div>
+          <div class="res-item"><span>可达粒度</span><b>D97 ${main.s.d97[0]}–${main.s.d97[1]} µm</b></div>
+          <div class="res-item"><span>工艺类型</span><b>${main.s.cat}</b></div>
+        </div>
+        
+        ${warningHtml}
+        ${main.s.opt ? `<div class="res-opt"><b>推荐选配项</b><br>${main.s.opt.join(' · ')}</div>` : ''}
+      </div>
+    </div>`;
+
+  const alts = list.slice(1);
+  if (alts.length){
+    html += `<div class="res-header" style="margin-top: 32px;">备选方案</div><div class="card"><div class="card-body">`;
+    for (const a of alts){
+      const am = pickModel(a.s, ctx.cap);
+      html += `
+        <div class="res-alt-item">
+          <h3>${a.s.name}</h3>
+          <p>${a.s.sub}</p>
+          <div class="res-alt-kv">
+            <div><span>型号</span> <b>${am.name}</b></div>
+            <div><span>产能</span> <b>${am.range} kg/h</b></div>
+          </div>
+        </div>`;
+    }
+    html += `</div></div>`;
+  }
+  outEl.innerHTML = html;
+}
+
+function evaluate(){
+  if (!(actualSizeUm > 0)){
+    outEl.innerHTML = `<div class="card" style="padding: 0;"><div class="empty-state"><h3>参数异常</h3><p>请检查粒度滑动条。</p></div></div>`;
+    return;
+  }
+
+  const d97 = normD97(actualSizeUm, basis);
+  const attrs = [...chipsEl.querySelectorAll('.chip.on')].map(b => b.dataset.k);
+
+  const scored = [];
+  for (const s of DB){
+    const sc = scoreSeries(s, d97, targetCap, attrs);
+    if (sc > 0) scored.push({ s, sc });
+  }
+  scored.sort((a, b) => b.sc - a.sc);
+  render(scored.slice(0, 3), { cap: targetCap, d97, attrs });
+}
+
+$('go').addEventListener('click', evaluate);
+
+// 初始化颜色
+capDisplay.style.color = getDynamicColor(500, 10, 10000);
+sizeDisplay.style.color = getDynamicColor(45, 1, 500);
+
+</script>
+</body>
+</html>
