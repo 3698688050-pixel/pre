@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>粉体设备高级预选型 - 极简版</title>
+<title>粉体设备高级预选型 - 极简开关版</title>
 <style>
   :root {
     --bg: #0f0f11; --surface: #1a1a1e; --text-main: #f2f2f5; --text-sub: #8b8b93;
@@ -101,16 +101,6 @@
 
   .slider-ticks { display: flex; justify-content: space-between; font-size: 11px; color: #55555c; font-weight: 600; margin-top: 4px; padding: 0 4px; }
 
-  /* 胶囊标签 */
-  .chips-cloud { display: flex; flex-wrap: wrap; gap: 10px; }
-  .chip {
-    padding: 10px 16px; border-radius: 99px; border: 1px solid var(--line);
-    background: transparent; color: var(--text-sub);
-    font-family: inherit; font-size: 14px; font-weight: 600; transition: all 0.2s ease; cursor: pointer;
-  }
-  .chip.on { background: rgba(41, 121, 255, 0.15); border-color: var(--accent); color: var(--accent); }
-  .chip[data-k="ex"].on { background: rgba(255, 82, 82, 0.15); border-color: var(--danger); color: var(--danger); }
-
   .unit-switch { display: flex; background: var(--bg); border-radius: 8px; padding: 2px; box-shadow: var(--shadow-in); border: 1px solid rgba(255,255,255,0.02); }
   .unit-switch button {
     padding: 4px 12px; border: none; background: transparent; font-size: 12px; font-weight: 700;
@@ -127,11 +117,83 @@
   .btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 10px var(--accent-glow); }
 
   /* =========================================
-     结果区与评分算法 UI
+     新设计：iOS 风格工艺开关列表
+     ========================================= */
+  .switch-list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  
+  .switch-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .switch-row:last-child { border-bottom: none; }
+  .switch-row:active { background: rgba(255,255,255,0.03); }
+
+  .switch-label {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-main);
+    transition: color 0.2s;
+  }
+
+  /* iOS 开关轨道 */
+  .switch-track {
+    width: 44px;
+    height: 24px;
+    border-radius: 24px;
+    background: #333;
+    position: relative;
+    transition: background 0.3s ease;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+  }
+
+  /* iOS 开关滑块 */
+  .switch-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background 0.2s;
+  }
+
+  /* 开启状态 */
+  .switch-row.on .switch-track {
+    background: var(--accent);
+  }
+  .switch-row.on .switch-thumb {
+    transform: translateX(20px);
+  }
+  .switch-row.on .switch-label {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* 特殊：易燃易爆开启状态 */
+  .switch-row[data-k="ex"].on .switch-track {
+    background: var(--danger);
+  }
+  .switch-row[data-k="ex"].on .switch-label {
+    color: var(--danger);
+  }
+
+  /* =========================================
+     结果区与评分 UI
      ========================================= */
   .res-header { font-size: 18px; font-weight: 800; color: #fff; margin: 24px 4px 12px; }
   
-  /* 匹配度标签 */
   .result-tag {
     position: absolute; top: 16px; right: 16px;
     padding: 4px 12px; border-radius: 8px;
@@ -145,8 +207,7 @@
 
   .res-main-title { 
     font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 4px; 
-    padding-right: 80px; /* 防止被右上角数字遮挡 */
-    word-break: break-all;
+    padding-right: 80px; word-break: break-all;
   }
   .res-sub-title { font-size: 14px; color: var(--text-sub); margin-bottom: 20px; }
   
@@ -253,22 +314,64 @@
     <div class="card-head">
       <div class="card-title-wrap"><span class="card-num">03</span><span class="card-title">物理与工艺属性</span></div>
     </div>
-    <div class="card-body">
-      <div class="chips-cloud" id="chips">
-        <button class="chip" data-k="hard">莫氏硬度高</button>
-        <button class="chip" data-k="quartz">磨蚀性极强</button>
-        <button class="chip" data-k="wet">含水率高</button>
-        <button class="chip" data-k="fib">纤维/高韧性</button>
-        <button class="chip" data-k="sticky">粘性易糊壁</button>
-        <button class="chip" data-k="static">易起静电</button>
-        <button class="chip" data-k="flow">流动性差</button>
-        <button class="chip" data-k="heat">热敏/低熔点</button>
-        <button class="chip" data-k="oxidation">易氧化</button>
-        <button class="chip" data-k="volatile">易挥发</button>
-        <button class="chip" data-k="ex">易燃易爆</button>
-        <button class="chip" data-k="pure">无金属污染</button>
-        <button class="chip" data-k="gmp">医药食品级</button>
+    <div class="card-body" style="padding-top: 0;">
+      
+      <!-- iOS 风格开关列表 -->
+      <div class="switch-list" id="chips">
+        <div class="switch-row" data-k="hard">
+          <span class="switch-label">莫氏硬度高</span>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </div>
+        <div class="switch-row" data-k="quartz">
+          <span class="switch-label">磨蚀性极强</span>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </div>
+        <div class="switch-row" data-k="wet">
+          <span class="switch-label">含水率高</span>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </div>
+        <div class="switch-row" data-k="fib">
+          <span class="switch-label">纤维 / 高韧性</span>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </div>
+        <div class="switch-row" data-k="sticky">
+          <span class="switch-label">粘性易糊壁</span>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </div>
+        <div class="switch-row" data-k="static">
+          <span class="switch-label">易起静电</span>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </div>
+        <div class="switch-row" data-k="flow">
+          <span class="switch-label">流动性差</span>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </div>
+        <div class="switch-row" data-k="heat">
+          <span class="switch-label">热敏 / 低熔点</span>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </div>
+        <div class="switch-row" data-k="oxidation">
+          <span class="switch-label">易氧化</span>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </div>
+        <div class="switch-row" data-k="volatile">
+          <span class="switch-label">易挥发</span>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </div>
+        <div class="switch-row" data-k="ex">
+          <span class="switch-label" style="color: var(--danger);">易燃易爆</span>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </div>
+        <div class="switch-row" data-k="pure">
+          <span class="switch-label">无金属污染</span>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </div>
+        <div class="switch-row" data-k="gmp">
+          <span class="switch-label">医药食品级</span>
+          <div class="switch-track"><div class="switch-thumb"></div></div>
+        </div>
       </div>
+
     </div>
   </div>
 
@@ -529,19 +632,25 @@ segButtons.forEach(btn => {
   });
 });
 
+// 开关列表点击事件
 chipsEl.addEventListener('click', e => {
-  const b = e.target.closest('.chip');
-  if(!b) return;
-  b.classList.toggle('on');
+  const row = e.target.closest('.switch-row');
+  if(!row) return;
+  row.classList.toggle('on');
 });
 
+// 物料联动
 matEl.addEventListener('input', () => {
   const val = matEl.value.trim();
   const info = MATERIAL_DB[val];
   if (info) {
     catEl.value = info.cat;
-    [...chipsEl.children].forEach(b => {
-      b.classList.toggle('on', info.attrs.includes(b.dataset.k));
+    [...chipsEl.children].forEach(row => {
+      if (info.attrs.includes(row.dataset.k)) {
+        row.classList.add('on');
+      } else {
+        row.classList.remove('on');
+      }
     });
   }
 });
@@ -559,22 +668,17 @@ function scoreSeries(s, d97, cap, attrs){
   const isHighHard = attrs.includes('hard') || attrs.includes('quartz');
   const isEx = attrs.includes('ex');
 
-  // 直接互斥（绝对不匹配）
   if (s.cat === '机械磨' && isHighHard) return -1; 
   if (s.cat === '机械磨' && isEx) return -1;
   if (s.cat === '气流磨' && (attrs.includes('sticky') || attrs.includes('fib') || attrs.includes('wet'))) return -1;
   if (s.id === 'BALL' && cap < 200) return -1;
-  
-  // 粒度超出物理极限
   if (d97 < s.d97[0] * 0.65) return -1;
   if (d97 > s.d97[1] * 2.2) return -1;
 
-  // 基础分 50分
   let sc = 50;
   let minDiff = Infinity;
   let maxCap = 0;
   
-  // 产能匹配加分 (满分30)
   if (s.id === 'BALL') {
     maxCap = s.models[s.models.length - 1].cap[1];
     for (let i = 0; i < s.models.length; i++) {
@@ -593,14 +697,9 @@ function scoreSeries(s, d97, cap, attrs){
     }
   }
 
-  // 产能过大惩罚
-  if (minDiff > 2.0) sc -= 30; 
-  else if (minDiff > 0.5) sc -= 10;
-
-  // 粒度匹配加分 (满分20)
+  if (minDiff > 2.0) sc -= 30; else if (minDiff > 0.5) sc -= 10;
   if (d97 >= s.d97[0] && d97 <= s.d97[1]) sc += 20;
 
-  // 属性匹配加减分
   for (const a of attrs){
     if (s.good.includes(a)) sc += 15; 
     if (s.bad.includes(a))  sc -= 20; 
@@ -653,11 +752,8 @@ function render(list, ctx){
   const mm = pickModel(main.s, ctx.cap);
   const matName = matEl.value.trim();
   
-  // 将原始分映射为百分比。
-  // 理论最高分大概在 50(基础) + 30(产能) + 20(粒度) + 40(属性) = 140分左右
-  // 但考虑到可能属性没选全，我们做个映射，尽量分布在 50% - 99% 之间
   let matchPct = Math.min(99, Math.round(main.sc * 0.75)); 
-  if (matchPct < 50) matchPct = 50; // 保底50%
+  if (matchPct < 50) matchPct = 50; 
 
   let tagClass = 'tag-red';
   if (matchPct >= 80) tagClass = 'tag-green';
@@ -701,7 +797,7 @@ function evaluate(){
   }
 
   const d97 = normD97(actualSizeUm, basis);
-  const attrs = [...chipsEl.querySelectorAll('.chip.on')].map(b => b.dataset.k);
+  const attrs = [...chipsEl.querySelectorAll('.switch-row.on')].map(row => row.dataset.k);
 
   const scored = [];
   for (const s of DB){
@@ -709,7 +805,6 @@ function evaluate(){
     if (sc > 0) scored.push({ s, sc });
   }
   
-  // 只取最高分的一个
   scored.sort((a, b) => b.sc - a.sc);
   render(scored.slice(0, 1), { cap: targetCap, d97, attrs });
 }
