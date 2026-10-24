@@ -74,16 +74,14 @@
   .slider-label { font-size: 13px; font-weight: 600; color: var(--text-sub); }
   .slider-value-wrap { text-align: right; position: relative; }
   
-  /* 点击输入的状态 */
   .slider-value { 
     font-size: 28px; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; 
     transition: color 0.1s; cursor: pointer;
-    border-bottom: 1px dashed rgba(255,255,255,0.2); /* 提示可点击 */
+    border-bottom: 1px dashed rgba(255,255,255,0.2);
     padding-bottom: 2px;
   }
   .slider-value:hover { border-bottom-color: var(--accent); }
   
-  /* 内联输入框 */
   .inline-input {
     font-size: 28px; font-weight: 900; line-height: 1;
     background: rgba(41, 121, 255, 0.1); border: 1px solid var(--accent);
@@ -94,7 +92,6 @@
   
   .slider-unit { font-size: 14px; color: var(--text-sub); font-weight: 600; margin-left: 2px; }
 
-  /* 原生滑块隐藏 */
   input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin: 8px 0; }
   input[type=range]:focus { outline: none; }
   input[type=range]::-webkit-slider-runnable-track {
@@ -123,7 +120,6 @@
   .chip.on { background: rgba(41, 121, 255, 0.15); border-color: var(--accent); color: var(--accent); }
   .chip[data-k="ex"].on { background: rgba(255, 82, 82, 0.15); border-color: var(--danger); color: var(--danger); }
 
-  /* 切换开关 */
   .unit-switch { display: flex; background: var(--bg); border-radius: 8px; padding: 2px; box-shadow: var(--shadow-in); border: 1px solid rgba(255,255,255,0.02); }
   .unit-switch button {
     padding: 4px 12px; border: none; background: transparent; font-size: 12px; font-weight: 700;
@@ -131,7 +127,6 @@
   }
   .unit-switch button.on { background: var(--surface-hover); color: #fff; box-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
 
-  /* 提交按钮 */
   .btn-primary {
     display: block; width: 100%; padding: 18px; border-radius: 16px;
     background: var(--accent); color: #fff; border: none; font-family: inherit; font-size: 18px; font-weight: 800;
@@ -141,22 +136,27 @@
   .btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 10px var(--accent-glow); }
 
   /* =========================================
-     结果区与评级标签
+     结果区与评级标签（对齐修复）
      ========================================= */
   .res-header { font-size: 18px; font-weight: 800; color: #fff; margin: 24px 4px 12px; }
   
-  /* 评级标签 */
+  /* 纯中文标签，绝对固定在右上角 */
   .result-tag {
     position: absolute; top: 16px; right: 16px;
-    padding: 4px 10px; border-radius: 8px;
-    font-size: 12px; font-weight: 900; letter-spacing: 0.05em;
-    display: flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 6px;
+    font-size: 12px; font-weight: 800; 
+    display: flex; align-items: center; justify-content: center;
   }
   .result-tag.match { color: var(--tag-match); border: 1px solid rgba(255,59,48,0.4); background: rgba(255,59,48,0.1); }
   .result-tag.eco { color: var(--tag-eco); border: 1px solid rgba(52,199,89,0.4); background: rgba(52,199,89,0.1); }
   .result-tag.bal { color: var(--tag-bal); border: 1px solid rgba(255,204,0,0.4); background: rgba(255,204,0,0.1); }
 
-  .res-main-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 4px; padding-right: 60px; }
+  /* 主推卡片排版 */
+  .res-main-title { 
+    font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 4px; 
+    padding-right: 60px; /* 留出右侧空间给标签，防止重叠 */
+    word-break: break-all;
+  }
   .res-sub-title { font-size: 14px; color: var(--text-sub); margin-bottom: 20px; }
   
   .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -167,9 +167,17 @@
   .res-opt { margin-top: 20px; padding-top: 16px; border-top: 1px dashed var(--line); font-size: 13px; color: var(--text-sub); }
   .res-opt b { color: var(--text-main); font-weight: 700; }
   
-  .res-alt-item { padding: 16px 0; border-bottom: 1px solid var(--line); position: relative; }
+  /* 备选卡片排版对齐 */
+  .res-alt-item { 
+    padding: 16px 0; border-bottom: 1px solid var(--line); position: relative; 
+  }
   .res-alt-item:last-child { border-bottom: none; padding-bottom: 0; }
-  .res-alt-item h3 { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; padding-right: 70px; }
+  .res-alt-item:first-child { padding-top: 8px; }
+  
+  .res-alt-item h3 { 
+    font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; 
+    padding-right: 60px; /* 留出右侧空间，防止标题太长被标签遮挡 */
+  }
   .res-alt-item p { font-size: 13px; color: var(--text-sub); margin-bottom: 12px; }
   .res-alt-kv { display: flex; gap: 20px; font-size: 13px; font-weight: 600; }
   .res-alt-kv span { color: var(--text-sub); }
@@ -455,16 +463,12 @@ function makeEditable(displayEl, sliderEl, min, max, isMesh) {
     const commit = () => {
       let val = parseFloat(input.value.replace(/,/g, ''));
       if (isNaN(val)) val = parseFloat(sliderEl.value);
-      // 边界限制
       if (val < min) val = min;
       if (val > max) val = max;
       
-      // 更新滑块
       sliderEl.value = val;
-      // 手动触发 input 事件以同步所有状态
       sliderEl.dispatchEvent(new Event('input'));
       
-      // 恢复成普通 span
       const span = document.createElement('span');
       span.id = displayEl.id;
       span.className = 'slider-value';
@@ -472,7 +476,6 @@ function makeEditable(displayEl, sliderEl, min, max, isMesh) {
       span.style.color = getDynamicColor(val, min, max);
       
       input.parentNode.replaceChild(span, input);
-      // 重新绑定点击事件
       makeEditable(span, sliderEl, min, max, isMesh);
     };
 
@@ -483,7 +486,6 @@ function makeEditable(displayEl, sliderEl, min, max, isMesh) {
   });
 }
 
-// 初始化可编辑功能
 makeEditable(capDisplay, capSlider, 10, 10000, false);
 makeEditable(sizeDisplay, sizeSlider, 1, 500, false);
 
@@ -513,7 +515,7 @@ unitSwitch.addEventListener('click', e => {
   currentUnit = btn.dataset.u;
 
   const span = document.querySelector('.inline-input') || sizeDisplay;
-  if (span.tagName === 'INPUT') span.blur(); // 如果正在编辑，先失去焦点
+  if (span.tagName === 'INPUT') span.blur(); 
 
   if (currentUnit === 'um') {
     sizeUnitLabel.innerText = 'µm';
@@ -671,11 +673,11 @@ function render(list, ctx){
     warningHtml += `<div class="res-warn"><b>防爆强制要求：</b><br>物料具有易燃易爆属性，系统必须配备<b>防爆电机、全密闭惰性气体（氮气）循环、静电接地及在线氧含量监测</b>。</div>`;
   }
 
-  // 主推方案 (MATCH)
+  // 主推方案
   let html = `
     <div class="res-header">系统评估结果</div>
     <div class="card">
-      <div class="result-tag match">MATCH · 最符合</div>
+      <div class="result-tag match">最符合</div>
       <div class="card-body" style="padding-top: 24px;">
         <div class="res-main-title">${main.s.name}</div>
         <div class="res-sub-title">${main.s.sub}${matName ? ' · ' + matName : ''}</div>
@@ -692,17 +694,17 @@ function render(list, ctx){
       </div>
     </div>`;
 
-  // 备选方案 (ECONOMY / BALANCED)
+  // 备选方案
   const alts = list.slice(1);
   if (alts.length){
     html += `<div class="res-header" style="margin-top: 32px;">备选方案</div><div class="card"><div class="card-body">`;
     
-    // 第二个：最经济 (ECONOMY)
+    // 第二个：最经济
     const alt1 = alts[0];
     const am1 = pickModel(alt1.s, ctx.cap);
     html += `
       <div class="res-alt-item">
-        <div class="result-tag eco">ECONOMY · 最经济</div>
+        <div class="result-tag eco">最经济</div>
         <h3>${alt1.s.name}</h3>
         <p>${alt1.s.sub}</p>
         <div class="res-alt-kv">
@@ -711,13 +713,13 @@ function render(list, ctx){
         </div>
       </div>`;
 
-    // 第三个：最平衡 (BALANCED)
+    // 第三个：最平衡
     if (alts.length > 1) {
       const alt2 = alts[1];
       const am2 = pickModel(alt2.s, ctx.cap);
       html += `
         <div class="res-alt-item">
-          <div class="result-tag bal">BALANCED · 最平衡</div>
+          <div class="result-tag bal">最平衡</div>
           <h3>${alt2.s.name}</h3>
           <p>${alt2.s.sub}</p>
           <div class="res-alt-kv">
