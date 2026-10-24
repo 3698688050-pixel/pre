@@ -3,17 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>粉体设备高级预选型 - PRO MAX</title>
+<title>粉体设备高级预选型 - 极简版</title>
 <style>
   :root {
     --bg: #0f0f11; --surface: #1a1a1e; --text-main: #f2f2f5; --text-sub: #8b8b93;
     --line: #2a2a30; --accent: #2979ff; --accent-glow: rgba(41, 121, 255, 0.3);
     --danger: #ff5252;
-    
-    /* 标签颜色 */
-    --tag-match: #ff3b30;
-    --tag-eco: #34c759;
-    --tag-bal: #ffcc00;
     
     --shadow-out: 4px 4px 10px rgba(0,0,0,0.4), -2px -2px 6px rgba(255,255,255,0.03);
     --shadow-in: inset 4px 4px 10px rgba(0,0,0,0.6), inset -2px -2px 6px rgba(255,255,255,0.05);
@@ -64,9 +59,7 @@
     background-repeat: no-repeat; background-position: right 16px top 50%; background-size: 12px auto;
   }
 
-  /* =========================================
-     滑块与数字输入
-     ========================================= */
+  /* 滑块与数字输入 */
   .slider-container { margin-bottom: 24px; }
   .slider-container:last-child { margin-bottom: 0; }
   
@@ -108,9 +101,7 @@
 
   .slider-ticks { display: flex; justify-content: space-between; font-size: 11px; color: #55555c; font-weight: 600; margin-top: 4px; padding: 0 4px; }
 
-  /* =========================================
-     胶囊标签云
-     ========================================= */
+  /* 胶囊标签 */
   .chips-cloud { display: flex; flex-wrap: wrap; gap: 10px; }
   .chip {
     padding: 10px 16px; border-radius: 99px; border: 1px solid var(--line);
@@ -136,25 +127,25 @@
   .btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 10px var(--accent-glow); }
 
   /* =========================================
-     结果区与评级标签（对齐修复）
+     结果区与评分算法 UI
      ========================================= */
   .res-header { font-size: 18px; font-weight: 800; color: #fff; margin: 24px 4px 12px; }
   
-  /* 纯中文标签，绝对固定在右上角 */
+  /* 匹配度标签 */
   .result-tag {
     position: absolute; top: 16px; right: 16px;
-    padding: 2px 8px; border-radius: 6px;
-    font-size: 12px; font-weight: 800; 
+    padding: 4px 12px; border-radius: 8px;
+    font-size: 16px; font-weight: 900; 
     display: flex; align-items: center; justify-content: center;
+    font-variant-numeric: tabular-nums;
   }
-  .result-tag.match { color: var(--tag-match); border: 1px solid rgba(255,59,48,0.4); background: rgba(255,59,48,0.1); }
-  .result-tag.eco { color: var(--tag-eco); border: 1px solid rgba(52,199,89,0.4); background: rgba(52,199,89,0.1); }
-  .result-tag.bal { color: var(--tag-bal); border: 1px solid rgba(255,204,0,0.4); background: rgba(255,204,0,0.1); }
+  .tag-red { color: #ff3b30; border: 1px solid rgba(255,59,48,0.4); background: rgba(255,59,48,0.1); }
+  .tag-yellow { color: #ffcc00; border: 1px solid rgba(255,204,0,0.4); background: rgba(255,204,0,0.1); }
+  .tag-green { color: #34c759; border: 1px solid rgba(52,199,89,0.4); background: rgba(52,199,89,0.1); }
 
-  /* 主推卡片排版 */
   .res-main-title { 
     font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 4px; 
-    padding-right: 60px; /* 留出右侧空间给标签，防止重叠 */
+    padding-right: 80px; /* 防止被右上角数字遮挡 */
     word-break: break-all;
   }
   .res-sub-title { font-size: 14px; color: var(--text-sub); margin-bottom: 20px; }
@@ -162,26 +153,12 @@
   .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .res-item span { display: block; font-size: 12px; font-weight: 600; color: var(--text-sub); margin-bottom: 4px; }
   .res-item b { display: block; font-size: 15px; font-weight: 700; color: var(--text-main); }
+  
   .res-warn { margin-top: 20px; padding: 16px; border-radius: 12px; background: rgba(255, 82, 82, 0.08); border: 1px solid rgba(255, 82, 82, 0.2); color: #ff8a80; font-size: 13px; line-height: 1.6; }
   .res-warn b { color: var(--danger); font-weight: 800; }
   .res-opt { margin-top: 20px; padding-top: 16px; border-top: 1px dashed var(--line); font-size: 13px; color: var(--text-sub); }
   .res-opt b { color: var(--text-main); font-weight: 700; }
   
-  /* 备选卡片排版对齐 */
-  .res-alt-item { 
-    padding: 16px 0; border-bottom: 1px solid var(--line); position: relative; 
-  }
-  .res-alt-item:last-child { border-bottom: none; padding-bottom: 0; }
-  .res-alt-item:first-child { padding-top: 8px; }
-  
-  .res-alt-item h3 { 
-    font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; 
-    padding-right: 60px; /* 留出右侧空间，防止标题太长被标签遮挡 */
-  }
-  .res-alt-item p { font-size: 13px; color: var(--text-sub); margin-bottom: 12px; }
-  .res-alt-kv { display: flex; gap: 20px; font-size: 13px; font-weight: 600; }
-  .res-alt-kv span { color: var(--text-sub); }
-  .res-alt-kv b { color: var(--text-main); }
   .empty-state { text-align: center; padding: 32px 0; }
   .empty-state h3 { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 8px; }
   .empty-state p { font-size: 14px; color: var(--text-sub); }
@@ -582,20 +559,27 @@ function scoreSeries(s, d97, cap, attrs){
   const isHighHard = attrs.includes('hard') || attrs.includes('quartz');
   const isEx = attrs.includes('ex');
 
+  // 直接互斥（绝对不匹配）
   if (s.cat === '机械磨' && isHighHard) return -1; 
   if (s.cat === '机械磨' && isEx) return -1;
   if (s.cat === '气流磨' && (attrs.includes('sticky') || attrs.includes('fib') || attrs.includes('wet'))) return -1;
   if (s.id === 'BALL' && cap < 200) return -1;
+  
+  // 粒度超出物理极限
   if (d97 < s.d97[0] * 0.65) return -1;
   if (d97 > s.d97[1] * 2.2) return -1;
 
-  let sc = 0; let minDiff = Infinity; let maxCap = 0;
+  // 基础分 50分
+  let sc = 50;
+  let minDiff = Infinity;
+  let maxCap = 0;
   
+  // 产能匹配加分 (满分30)
   if (s.id === 'BALL') {
     maxCap = s.models[s.models.length - 1].cap[1];
     for (let i = 0; i < s.models.length; i++) {
       const m = s.models[i];
-      if (cap >= m.cap[0] * 0.8 && cap <= m.cap[1]) { sc += 80; minDiff = 0; break; }
+      if (cap >= m.cap[0] * 0.8 && cap <= m.cap[1]) { sc += 30; minDiff = 0; break; }
       const diff = cap < m.cap[0] ? (m.cap[0] - cap) / cap : (cap - m.cap[1]) / cap;
       if (diff < minDiff) { minDiff = diff; }
     }
@@ -603,22 +587,26 @@ function scoreSeries(s, d97, cap, attrs){
     maxCap = s.models[s.models.length - 1][2];
     for (let i = 0; i < s.models.length; i++) {
       const m = s.models[i];
-      if (cap >= m[1] * 0.8 && cap <= m[2]) { sc += 80; minDiff = 0; break; }
+      if (cap >= m[1] * 0.8 && cap <= m[2]) { sc += 30; minDiff = 0; break; }
       const diff = cap < m[1] ? (m[1] - cap) / cap : (cap - m[2]) / cap;
       if (diff < minDiff) { minDiff = diff; }
     }
   }
 
-  if (minDiff > 2.0) sc -= 150; else if (minDiff > 0.5) sc -= 40;
-  if (d97 >= s.d97[0] && d97 <= s.d97[1]) sc += 60; else if (d97 < s.d97[0]) sc += 15;
+  // 产能过大惩罚
+  if (minDiff > 2.0) sc -= 30; 
+  else if (minDiff > 0.5) sc -= 10;
 
+  // 粒度匹配加分 (满分20)
+  if (d97 >= s.d97[0] && d97 <= s.d97[1]) sc += 20;
+
+  // 属性匹配加减分
   for (const a of attrs){
-    if (s.good.includes(a)) sc += 25; 
-    if (s.bad.includes(a))  sc -= 50; 
+    if (s.good.includes(a)) sc += 15; 
+    if (s.bad.includes(a))  sc -= 20; 
   }
 
-  if (isHighHard && s.id === 'BALL') sc += 40;
-  if (!isHighHard && !attrs.includes('wet') && s.id === 'BALL') sc -= 30;
+  if (isHighHard && s.id === 'BALL') sc += 20;
   if (isEx && s.id === 'BALL') sc += 10;
 
   return sc;
@@ -665,6 +653,16 @@ function render(list, ctx){
   const mm = pickModel(main.s, ctx.cap);
   const matName = matEl.value.trim();
   
+  // 将原始分映射为百分比。
+  // 理论最高分大概在 50(基础) + 30(产能) + 20(粒度) + 40(属性) = 140分左右
+  // 但考虑到可能属性没选全，我们做个映射，尽量分布在 50% - 99% 之间
+  let matchPct = Math.min(99, Math.round(main.sc * 0.75)); 
+  if (matchPct < 50) matchPct = 50; // 保底50%
+
+  let tagClass = 'tag-red';
+  if (matchPct >= 80) tagClass = 'tag-green';
+  else if (matchPct >= 60) tagClass = 'tag-yellow';
+
   let warningHtml = '';
   if (ctx.attrs.includes('quartz') || ctx.attrs.includes('hard')) {
     warningHtml += `<div class="res-warn"><b>工程师警告：</b><br>物料磨蚀性极强，严禁使用普通钢衬板。<br>推荐配置：<b>高铬合金耐磨衬板 + 高铬钢球 + 管道除铁器</b>。</div>`;
@@ -673,11 +671,10 @@ function render(list, ctx){
     warningHtml += `<div class="res-warn"><b>防爆强制要求：</b><br>物料具有易燃易爆属性，系统必须配备<b>防爆电机、全密闭惰性气体（氮气）循环、静电接地及在线氧含量监测</b>。</div>`;
   }
 
-  // 主推方案
   let html = `
-    <div class="res-header">系统评估结果</div>
+    <div class="res-header">智能匹配结果</div>
     <div class="card">
-      <div class="result-tag match">最符合</div>
+      <div class="result-tag ${tagClass}">${matchPct}%</div>
       <div class="card-body" style="padding-top: 24px;">
         <div class="res-main-title">${main.s.name}</div>
         <div class="res-sub-title">${main.s.sub}${matName ? ' · ' + matName : ''}</div>
@@ -694,42 +691,6 @@ function render(list, ctx){
       </div>
     </div>`;
 
-  // 备选方案
-  const alts = list.slice(1);
-  if (alts.length){
-    html += `<div class="res-header" style="margin-top: 32px;">备选方案</div><div class="card"><div class="card-body">`;
-    
-    // 第二个：最经济
-    const alt1 = alts[0];
-    const am1 = pickModel(alt1.s, ctx.cap);
-    html += `
-      <div class="res-alt-item">
-        <div class="result-tag eco">最经济</div>
-        <h3>${alt1.s.name}</h3>
-        <p>${alt1.s.sub}</p>
-        <div class="res-alt-kv">
-          <div><span>型号</span> <b>${am1.name}</b></div>
-          <div><span>产能</span> <b>${am1.range} kg/h</b></div>
-        </div>
-      </div>`;
-
-    // 第三个：最平衡
-    if (alts.length > 1) {
-      const alt2 = alts[1];
-      const am2 = pickModel(alt2.s, ctx.cap);
-      html += `
-        <div class="res-alt-item">
-          <div class="result-tag bal">最平衡</div>
-          <h3>${alt2.s.name}</h3>
-          <p>${alt2.s.sub}</p>
-          <div class="res-alt-kv">
-            <div><span>型号</span> <b>${am2.name}</b></div>
-            <div><span>产能</span> <b>${am2.range} kg/h</b></div>
-          </div>
-        </div>`;
-    }
-    html += `</div></div>`;
-  }
   outEl.innerHTML = html;
 }
 
@@ -747,8 +708,10 @@ function evaluate(){
     const sc = scoreSeries(s, d97, targetCap, attrs);
     if (sc > 0) scored.push({ s, sc });
   }
+  
+  // 只取最高分的一个
   scored.sort((a, b) => b.sc - a.sc);
-  render(scored.slice(0, 3), { cap: targetCap, d97, attrs });
+  render(scored.slice(0, 1), { cap: targetCap, d97, attrs });
 }
 
 $('go').addEventListener('click', evaluate);
