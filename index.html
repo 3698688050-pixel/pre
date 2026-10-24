@@ -3,17 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>粉体设备高级预选型 - PRO</title>
+<title>粉体设备高级预选型 - PRO MAX</title>
 <style>
   :root {
-    --bg: #0f0f11;         
-    --surface: #1a1a1e;    
-    --text-main: #f2f2f5;  
-    --text-sub: #8b8b93;   
-    --line: #2a2a30;       
-    --accent: #2979ff;     
-    --accent-glow: rgba(41, 121, 255, 0.3);
+    --bg: #0f0f11; --surface: #1a1a1e; --text-main: #f2f2f5; --text-sub: #8b8b93;
+    --line: #2a2a30; --accent: #2979ff; --accent-glow: rgba(41, 121, 255, 0.3);
     --danger: #ff5252;
+    
+    /* 标签颜色 */
+    --tag-match: #ff3b30;
+    --tag-eco: #34c759;
+    --tag-bal: #ffcc00;
+    
     --shadow-out: 4px 4px 10px rgba(0,0,0,0.4), -2px -2px 6px rgba(255,255,255,0.03);
     --shadow-in: inset 4px 4px 10px rgba(0,0,0,0.6), inset -2px -2px 6px rgba(255,255,255,0.05);
   }
@@ -28,34 +29,27 @@
 
   .wrap { max-width: 520px; margin: 0 auto; }
 
-  /* 极简标题 */
   .header { margin-bottom: 24px; padding: 0 4px; }
   .header h1 { 
     font-size: 28px; font-weight: 900; letter-spacing: -0.04em; color: #fff;
     display: flex; align-items: center; gap: 10px;
   }
-  .header h1::before {
-    content: ''; display: block; width: 6px; height: 22px; background: var(--accent); border-radius: 3px;
-  }
+  .header h1::before { content: ''; display: block; width: 6px; height: 22px; background: var(--accent); border-radius: 3px; }
 
-  /* 卡片 */
   .card {
     background: var(--surface); border-radius: 20px;
     box-shadow: var(--shadow-out); border: 1px solid rgba(255, 255, 255, 0.04);
-    margin-bottom: 20px; overflow: hidden;
+    margin-bottom: 20px; overflow: hidden; position: relative;
   }
 
   .card-head { padding: 18px 20px 10px; display: flex; justify-content: space-between; align-items: center; }
   .card-title-wrap { display: flex; align-items: center; gap: 8px; }
-  .card-num { 
-    font-size: 12px; font-weight: 800; color: var(--accent); 
-    background: rgba(41, 121, 255, 0.15); padding: 2px 8px; border-radius: 6px;
-  }
+  .card-num { font-size: 12px; font-weight: 800; color: var(--accent); background: rgba(41, 121, 255, 0.15); padding: 2px 8px; border-radius: 6px; }
   .card-title { font-size: 16px; font-weight: 700; color: var(--text-main); }
 
   .card-body { padding: 10px 20px 20px; }
 
-  /* 顶部输入 */
+  /* 基础输入框 */
   .input-group { margin-bottom: 16px; }
   .input-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-sub); margin-bottom: 8px; }
   .input-field {
@@ -64,7 +58,6 @@
     box-shadow: var(--shadow-in); outline: none; border: 1px solid transparent; transition: border 0.2s;
   }
   .input-field:focus { border: 1px solid var(--accent); box-shadow: var(--shadow-in), 0 0 0 3px var(--accent-glow); }
-  
   select.input-field {
     -webkit-appearance: none; appearance: none;
     background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%238b8b93%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
@@ -72,21 +65,36 @@
   }
 
   /* =========================================
-     滑块与数字动效
+     滑块与数字输入
      ========================================= */
   .slider-container { margin-bottom: 24px; }
   .slider-container:last-child { margin-bottom: 0; }
   
   .slider-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
   .slider-label { font-size: 13px; font-weight: 600; color: var(--text-sub); }
-  .slider-value-wrap { text-align: right; }
+  .slider-value-wrap { text-align: right; position: relative; }
+  
+  /* 点击输入的状态 */
   .slider-value { 
     font-size: 28px; font-weight: 900; line-height: 1; font-variant-numeric: tabular-nums; 
-    transition: color 0.1s; /* 颜色平滑过渡 */
+    transition: color 0.1s; cursor: pointer;
+    border-bottom: 1px dashed rgba(255,255,255,0.2); /* 提示可点击 */
+    padding-bottom: 2px;
   }
+  .slider-value:hover { border-bottom-color: var(--accent); }
+  
+  /* 内联输入框 */
+  .inline-input {
+    font-size: 28px; font-weight: 900; line-height: 1;
+    background: rgba(41, 121, 255, 0.1); border: 1px solid var(--accent);
+    color: #fff; width: 110px; text-align: right; outline: none;
+    border-radius: 8px; padding: 0 4px;
+    font-family: inherit; -webkit-appearance: none;
+  }
+  
   .slider-unit { font-size: 14px; color: var(--text-sub); font-weight: 600; margin-left: 2px; }
 
-  /* 滑块轨道与滑块帽 */
+  /* 原生滑块隐藏 */
   input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin: 8px 0; }
   input[type=range]:focus { outline: none; }
   input[type=range]::-webkit-slider-runnable-track {
@@ -104,53 +112,53 @@
   .slider-ticks { display: flex; justify-content: space-between; font-size: 11px; color: #55555c; font-weight: 600; margin-top: 4px; padding: 0 4px; }
 
   /* =========================================
-     胶囊标签排布 (替代九宫格)
+     胶囊标签云
      ========================================= */
   .chips-cloud { display: flex; flex-wrap: wrap; gap: 10px; }
   .chip {
     padding: 10px 16px; border-radius: 99px; border: 1px solid var(--line);
     background: transparent; color: var(--text-sub);
-    font-family: inherit; font-size: 14px; font-weight: 600; 
-    transition: all 0.2s ease; cursor: pointer;
+    font-family: inherit; font-size: 14px; font-weight: 600; transition: all 0.2s ease; cursor: pointer;
   }
-  .chip.on {
-    background: rgba(41, 121, 255, 0.15);
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-  .chip[data-k="ex"].on {
-    background: rgba(255, 82, 82, 0.15);
-    border-color: var(--danger);
-    color: var(--danger);
-  }
+  .chip.on { background: rgba(41, 121, 255, 0.15); border-color: var(--accent); color: var(--accent); }
+  .chip[data-k="ex"].on { background: rgba(255, 82, 82, 0.15); border-color: var(--danger); color: var(--danger); }
 
-  /* 单位切换开关 (极简版本) */
-  .unit-switch {
-    display: flex; background: var(--bg); border-radius: 8px; padding: 2px;
-    box-shadow: var(--shadow-in); border: 1px solid rgba(255,255,255,0.02);
-  }
+  /* 切换开关 */
+  .unit-switch { display: flex; background: var(--bg); border-radius: 8px; padding: 2px; box-shadow: var(--shadow-in); border: 1px solid rgba(255,255,255,0.02); }
   .unit-switch button {
-    padding: 4px 12px; border: none; background: transparent;
-    font-size: 12px; font-weight: 700; color: var(--text-sub);
-    border-radius: 6px; cursor: pointer; transition: all 0.2s;
+    padding: 4px 12px; border: none; background: transparent; font-size: 12px; font-weight: 700;
+    color: var(--text-sub); border-radius: 6px; cursor: pointer; transition: all 0.2s;
   }
   .unit-switch button.on { background: var(--surface-hover); color: #fff; box-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
 
-  /* 底部按钮 */
+  /* 提交按钮 */
   .btn-primary {
     display: block; width: 100%; padding: 18px; border-radius: 16px;
-    background: var(--accent); color: #fff; border: none;
-    font-family: inherit; font-size: 18px; font-weight: 800;
+    background: var(--accent); color: #fff; border: none; font-family: inherit; font-size: 18px; font-weight: 800;
     cursor: pointer; box-shadow: 0 6px 20px var(--accent-glow), inset 0 2px 0 rgba(255,255,255,0.2);
     transition: all 0.1s; margin-bottom: 32px;
   }
   .btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 10px var(--accent-glow); }
 
-  /* 结果区 */
+  /* =========================================
+     结果区与评级标签
+     ========================================= */
   .res-header { font-size: 18px; font-weight: 800; color: #fff; margin: 24px 4px 12px; }
-  .res-main-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+  
+  /* 评级标签 */
+  .result-tag {
+    position: absolute; top: 16px; right: 16px;
+    padding: 4px 10px; border-radius: 8px;
+    font-size: 12px; font-weight: 900; letter-spacing: 0.05em;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .result-tag.match { color: var(--tag-match); border: 1px solid rgba(255,59,48,0.4); background: rgba(255,59,48,0.1); }
+  .result-tag.eco { color: var(--tag-eco); border: 1px solid rgba(52,199,89,0.4); background: rgba(52,199,89,0.1); }
+  .result-tag.bal { color: var(--tag-bal); border: 1px solid rgba(255,204,0,0.4); background: rgba(255,204,0,0.1); }
+
+  .res-main-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 4px; padding-right: 60px; }
   .res-sub-title { font-size: 14px; color: var(--text-sub); margin-bottom: 20px; }
-  .res-badge { display: inline-block; font-size: 12px; font-weight: 800; color: var(--accent); background: rgba(41, 121, 255, 0.15); padding: 4px 10px; border-radius: 8px; margin-bottom: 12px; }
+  
   .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .res-item span { display: block; font-size: 12px; font-weight: 600; color: var(--text-sub); margin-bottom: 4px; }
   .res-item b { display: block; font-size: 15px; font-weight: 700; color: var(--text-main); }
@@ -158,9 +166,10 @@
   .res-warn b { color: var(--danger); font-weight: 800; }
   .res-opt { margin-top: 20px; padding-top: 16px; border-top: 1px dashed var(--line); font-size: 13px; color: var(--text-sub); }
   .res-opt b { color: var(--text-main); font-weight: 700; }
-  .res-alt-item { padding: 16px 0; border-bottom: 1px solid var(--line); }
+  
+  .res-alt-item { padding: 16px 0; border-bottom: 1px solid var(--line); position: relative; }
   .res-alt-item:last-child { border-bottom: none; padding-bottom: 0; }
-  .res-alt-item h3 { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
+  .res-alt-item h3 { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; padding-right: 70px; }
   .res-alt-item p { font-size: 13px; color: var(--text-sub); margin-bottom: 12px; }
   .res-alt-kv { display: flex; gap: 20px; font-size: 13px; font-weight: 600; }
   .res-alt-kv span { color: var(--text-sub); }
@@ -180,9 +189,7 @@
   <!-- 01 基础信息 -->
   <div class="card">
     <div class="card-head">
-      <div class="card-title-wrap">
-        <span class="card-num">01</span><span class="card-title">物料与产能</span>
-      </div>
+      <div class="card-title-wrap"><span class="card-num">01</span><span class="card-title">物料与产能</span></div>
     </div>
     <div class="card-body">
       <div class="input-group">
@@ -225,10 +232,7 @@
   <!-- 02 粒度标准 -->
   <div class="card">
     <div class="card-head">
-      <div class="card-title-wrap">
-        <span class="card-num">02</span><span class="card-title">粒度标准</span>
-      </div>
-      <!-- 内置转换器开关 -->
+      <div class="card-title-wrap"><span class="card-num">02</span><span class="card-title">粒度标准</span></div>
       <div class="unit-switch" id="unitSwitch">
         <button class="on" data-u="um">µm</button>
         <button data-u="mesh">目</button>
@@ -245,7 +249,6 @@
             <span class="slider-unit" id="sizeUnitLabel">µm</span>
           </div>
         </div>
-        <!-- 滑块属性会随着单位切换用JS动态改变 -->
         <input type="range" id="sizeSlider" min="1" max="500" step="1" value="45">
         <div class="slider-ticks" id="sizeTicks"><span>1</span><span>100</span><span>300</span><span>500</span></div>
       </div>
@@ -263,12 +266,9 @@
   <!-- 03 工艺属性 -->
   <div class="card">
     <div class="card-head">
-      <div class="card-title-wrap">
-        <span class="card-num">03</span><span class="card-title">物理与工艺属性</span>
-      </div>
+      <div class="card-title-wrap"><span class="card-num">03</span><span class="card-title">物理与工艺属性</span></div>
     </div>
     <div class="card-body">
-      <!-- 使用流式标签云 -->
       <div class="chips-cloud" id="chips">
         <button class="chip" data-k="hard">莫氏硬度高</button>
         <button class="chip" data-k="quartz">磨蚀性极强</button>
@@ -385,12 +385,10 @@ const DB = [
   }
 ];
 
-/* ============ 初始化数据 ============ */
+/* ============ 初始化 ============ */
 const matListEl = document.getElementById('matList');
 Object.keys(MATERIAL_DB).forEach(k => {
-  const opt = document.createElement('option');
-  opt.value = k;
-  matListEl.appendChild(opt);
+  const opt = document.createElement('option'); opt.value = k; matListEl.appendChild(opt);
 });
 
 const $ = id => document.getElementById(id);
@@ -400,46 +398,37 @@ const sizeSlider = $('sizeSlider'), sizeDisplay = $('sizeDisplay');
 const unitSwitch = $('unitSwitch'), sizeUnitLabel = $('sizeUnitLabel'), sizeTicks = $('sizeTicks');
 const chipsEl = $('chips'), outEl = $('out');
 
-let currentUnit = 'um'; // 'um' 或 'mesh'
+let currentUnit = 'um';
 let targetCap = 500;
-let targetSizeUI = 45; // UI上显示的值 (微米或目数)
-let actualSizeUm = 45; // 实际传给算法的微米值
+let targetSizeUI = 45;
+let actualSizeUm = 45;
 let basis = 'D50'; 
 
-/* ============ 动画与颜色映射 ============ */
-// 颜色映射：低速 蓝(210) -> 中速 青(180) -> 高速 紫红(320)
+/* ============ 动画与颜色逻辑 ============ */
 function getDynamicColor(val, min, max) {
-  let p = (val - min) / (max - min); // 0 到 1
-  let hue = 210 + p * 110; // 210 (蓝) 到 320 (紫)
+  let p = (val - min) / (max - min);
+  let hue = 210 + p * 110;
   return `hsl(${hue}, 100%, 65%)`;
 }
 
-// 数字滚动动画
-function animateNumber(el, targetVal, min, max, unitText) {
+function animateNumber(el, targetVal, min, max) {
   const currentVal = parseFloat(el.innerText.replace(/,/g, '')) || 0;
   if (currentVal === targetVal) return;
-  
-  const duration = 200; // 动画时长(ms)
+  const duration = 200;
   const startTime = performance.now();
-  
   function update(currentTime) {
     const elapsed = currentTime - startTime;
     let progress = Math.min(elapsed / duration, 1);
-    // easeOutQuad 缓动函数
     progress = progress * (2 - progress); 
-    
     const current = currentVal + (targetVal - currentVal) * progress;
     
-    // 格式化，产能带千分位，粒度不需要
     let displayStr = targetVal > 1000 ? Math.round(current).toLocaleString() : Math.round(current);
     if (targetVal > 1000 && current < 1000) displayStr = Math.round(current); 
-    
     el.innerText = displayStr;
     el.style.color = getDynamicColor(current, min, max);
 
-    if (progress < 1) {
-      requestAnimationFrame(update);
-    } else {
+    if (progress < 1) requestAnimationFrame(update);
+    else {
       el.innerText = targetVal > 1000 ? targetVal.toLocaleString() : targetVal;
       el.style.color = getDynamicColor(targetVal, min, max);
     }
@@ -447,38 +436,88 @@ function animateNumber(el, targetVal, min, max, unitText) {
   requestAnimationFrame(update);
 }
 
-/* ============ 交互控制 ============ */
-// 产能滑块
+/* ============ 点击数字编辑功能 ============ */
+function makeEditable(displayEl, sliderEl, min, max, isMesh) {
+  displayEl.addEventListener('click', function() {
+    if (this.tagName === 'INPUT') return;
+    
+    const rawValue = this.innerText.replace(/,/g, '');
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.inputMode = 'numeric';
+    input.className = 'inline-input';
+    input.value = rawValue;
+    
+    this.parentNode.replaceChild(input, this);
+    input.focus();
+    input.select();
+
+    const commit = () => {
+      let val = parseFloat(input.value.replace(/,/g, ''));
+      if (isNaN(val)) val = parseFloat(sliderEl.value);
+      // 边界限制
+      if (val < min) val = min;
+      if (val > max) val = max;
+      
+      // 更新滑块
+      sliderEl.value = val;
+      // 手动触发 input 事件以同步所有状态
+      sliderEl.dispatchEvent(new Event('input'));
+      
+      // 恢复成普通 span
+      const span = document.createElement('span');
+      span.id = displayEl.id;
+      span.className = 'slider-value';
+      span.innerText = val > 1000 ? val.toLocaleString() : val;
+      span.style.color = getDynamicColor(val, min, max);
+      
+      input.parentNode.replaceChild(span, input);
+      // 重新绑定点击事件
+      makeEditable(span, sliderEl, min, max, isMesh);
+    };
+
+    input.addEventListener('blur', commit);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+    });
+  });
+}
+
+// 初始化可编辑功能
+makeEditable(capDisplay, capSlider, 10, 10000, false);
+makeEditable(sizeDisplay, sizeSlider, 1, 500, false);
+
+/* ============ 基础交互 ============ */
 capSlider.addEventListener('input', (e) => {
   targetCap = parseFloat(e.target.value);
-  animateNumber(capDisplay, targetCap, 10, 10000);
+  const el = document.getElementById('capDisplay') || document.querySelector('.inline-input');
+  if(el && el.tagName !== 'INPUT') animateNumber(el, targetCap, 10, 10000);
 });
 
-// 粒度滑块
 sizeSlider.addEventListener('input', (e) => {
   targetSizeUI = parseFloat(e.target.value);
   if (currentUnit === 'um') {
     actualSizeUm = targetSizeUI;
   } else {
-    // 目数转微米: 15400 / 目数
     actualSizeUm = 15400 / targetSizeUI;
   }
-  animateNumber(sizeDisplay, targetSizeUI, parseInt(sizeSlider.min), parseInt(sizeSlider.max));
+  const el = document.getElementById('sizeDisplay') || document.querySelector('.inline-input');
+  if(el && el.tagName !== 'INPUT') animateNumber(el, targetSizeUI, parseInt(sizeSlider.min), parseInt(sizeSlider.max));
 });
 
-// 单位切换器 (µm <-> 目)
 unitSwitch.addEventListener('click', e => {
   const btn = e.target.closest('button');
   if(!btn || btn.classList.contains('on')) return;
-  
   [...unitSwitch.children].forEach(x => x.classList.remove('on'));
   btn.classList.add('on');
   currentUnit = btn.dataset.u;
 
+  const span = document.querySelector('.inline-input') || sizeDisplay;
+  if (span.tagName === 'INPUT') span.blur(); // 如果正在编辑，先失去焦点
+
   if (currentUnit === 'um') {
     sizeUnitLabel.innerText = 'µm';
     sizeSlider.min = 1; sizeSlider.max = 500; sizeSlider.step = 1;
-    // 从目转回微米
     targetSizeUI = Math.round(15400 / targetSizeUI) || 45;
     if(targetSizeUI > 500) targetSizeUI = 500;
     if(targetSizeUI < 1) targetSizeUI = 1;
@@ -486,10 +525,8 @@ unitSwitch.addEventListener('click', e => {
     sizeTicks.innerHTML = `<span>1</span><span>100</span><span>300</span><span>500</span>`;
   } else {
     sizeUnitLabel.innerText = '目';
-    // 目数范围，大概 30目(粗) -> 12500目(极细)。反转滑块：左边是大数字(粗)，右边是小数字(细)
-    // 为直观，我们用 1-500 映射。1目=15400um，500目=30.8um
     sizeSlider.min = 30; sizeSlider.max = 1250; sizeSlider.step = 10;
-    targetSizeUI = Math.round(15400 / targetSizeUI) || 325; // 默认换算
+    targetSizeUI = Math.round(15400 / targetSizeUI) || 325;
     if(targetSizeUI > 1250) targetSizeUI = 1250;
     if(targetSizeUI < 30) targetSizeUI = 30;
     actualSizeUm = 15400 / targetSizeUI;
@@ -497,14 +534,13 @@ unitSwitch.addEventListener('click', e => {
   }
   
   sizeSlider.value = targetSizeUI;
-  sizeDisplay.innerText = targetSizeUI;
-  sizeDisplay.style.color = getDynamicColor(targetSizeUI, parseInt(sizeSlider.min), parseInt(sizeSlider.max));
+  const newSpan = document.getElementById('sizeDisplay');
+  if(newSpan) {
+    newSpan.innerText = targetSizeUI;
+    newSpan.style.color = getDynamicColor(targetSizeUI, parseInt(sizeSlider.min), parseInt(sizeSlider.max));
+  }
 });
 
-// D50 选择器
-document.querySelectorAll('.unit-switch[data-v]').forEach(el => {
-  // 这里其实复用了 unit-switch 的样式，但没有 id，需要找父级特定的那个
-});
 const segButtons = document.querySelectorAll('.unit-switch:not(#unitSwitch) button');
 segButtons.forEach(btn => {
   btn.addEventListener('click', (e) => {
@@ -514,14 +550,12 @@ segButtons.forEach(btn => {
   });
 });
 
-// 特性标签云
 chipsEl.addEventListener('click', e => {
   const b = e.target.closest('.chip');
   if(!b) return;
   b.classList.toggle('on');
 });
 
-// 物料联动
 matEl.addEventListener('input', () => {
   const val = matEl.value.trim();
   const info = MATERIAL_DB[val];
@@ -612,6 +646,7 @@ function pickModel(s, cap){
   }
 }
 
+/* ============ 结果渲染 ============ */
 function render(list, ctx){
   if (!list.length){
     outEl.innerHTML = `
@@ -636,11 +671,12 @@ function render(list, ctx){
     warningHtml += `<div class="res-warn"><b>防爆强制要求：</b><br>物料具有易燃易爆属性，系统必须配备<b>防爆电机、全密闭惰性气体（氮气）循环、静电接地及在线氧含量监测</b>。</div>`;
   }
 
+  // 主推方案 (MATCH)
   let html = `
     <div class="res-header">系统评估结果</div>
     <div class="card">
+      <div class="result-tag match">MATCH · 最符合</div>
       <div class="card-body" style="padding-top: 24px;">
-        <div class="res-badge">BEST MATCH</div>
         <div class="res-main-title">${main.s.name}</div>
         <div class="res-sub-title">${main.s.sub}${matName ? ' · ' + matName : ''}</div>
         
@@ -656,18 +692,37 @@ function render(list, ctx){
       </div>
     </div>`;
 
+  // 备选方案 (ECONOMY / BALANCED)
   const alts = list.slice(1);
   if (alts.length){
     html += `<div class="res-header" style="margin-top: 32px;">备选方案</div><div class="card"><div class="card-body">`;
-    for (const a of alts){
-      const am = pickModel(a.s, ctx.cap);
+    
+    // 第二个：最经济 (ECONOMY)
+    const alt1 = alts[0];
+    const am1 = pickModel(alt1.s, ctx.cap);
+    html += `
+      <div class="res-alt-item">
+        <div class="result-tag eco">ECONOMY · 最经济</div>
+        <h3>${alt1.s.name}</h3>
+        <p>${alt1.s.sub}</p>
+        <div class="res-alt-kv">
+          <div><span>型号</span> <b>${am1.name}</b></div>
+          <div><span>产能</span> <b>${am1.range} kg/h</b></div>
+        </div>
+      </div>`;
+
+    // 第三个：最平衡 (BALANCED)
+    if (alts.length > 1) {
+      const alt2 = alts[1];
+      const am2 = pickModel(alt2.s, ctx.cap);
       html += `
         <div class="res-alt-item">
-          <h3>${a.s.name}</h3>
-          <p>${a.s.sub}</p>
+          <div class="result-tag bal">BALANCED · 最平衡</div>
+          <h3>${alt2.s.name}</h3>
+          <p>${alt2.s.sub}</p>
           <div class="res-alt-kv">
-            <div><span>型号</span> <b>${am.name}</b></div>
-            <div><span>产能</span> <b>${am.range} kg/h</b></div>
+            <div><span>型号</span> <b>${am2.name}</b></div>
+            <div><span>产能</span> <b>${am2.range} kg/h</b></div>
           </div>
         </div>`;
     }
